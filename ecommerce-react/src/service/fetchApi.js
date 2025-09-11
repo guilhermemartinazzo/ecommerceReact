@@ -2,9 +2,10 @@ import api from "./api";
 
 const fetchApi = async (route) => {
   try {
-    const headerWithAuth = await getHeadersWithAuth();
-    const response = await api.get(route, headerWithAuth);
-    console.log("Dados da API:", response.data);
+    const loginn = await login("guilherme@email.com", "senhaForte");
+    const response = await api.get(route, {
+      headers: { Authorization: loginn.data.token },
+    });
     return response.data;
   } catch (error) {
     console.error("Erro ao buscar dados da API:", error);
@@ -12,16 +13,16 @@ const fetchApi = async (route) => {
   }
 };
 
-const getHeadersWithAuth = async () => {
+const login = async (email, pw) => {
   try {
-    const loginPayload = { email: "guilherme@email.com", senha: "senhaForte" };
-    const loginResponse = await api.post("/login", loginPayload);
-    const headers = { headers: { Authorization: loginResponse.data.token } };
-    return headers;
+    // guilherme@email.com
+    // senhaForte
+    const loginPayload = { email: email, senha: pw };
+    return await api.post("/login", loginPayload);
   } catch (error) {
     console.error("Erro ao fazer login:", error);
     throw error;
   }
 };
 
-export default fetchApi;
+export { fetchApi, login };
